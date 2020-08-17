@@ -1,6 +1,6 @@
 # spring-microservices-notes
 
-Notes of reading *Spring microservices in action*.
+☁️ Notes of reading *Spring microservices in action*.
 
 Created by : Mr Dk.
 
