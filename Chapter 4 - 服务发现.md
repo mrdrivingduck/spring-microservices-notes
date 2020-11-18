@@ -57,7 +57,7 @@ Created by : Mr Dk.
 
 1. 服务启动，实例通过 Eureka 服务进行注册，告诉 Eureka 本实例的物理位置、端口号、服务 ID
 2. 客户端使用 Netflix Ribbon 去联系 Eureka 服务检索服务位置信息，然后在本地进行缓存
-3. Netflix Ribbon 定去对 Eureka 服务进行 ping，刷新本地缓存
+3. Netflix Ribbon 定期对 Eureka 服务进行 ping，刷新本地缓存
 
 ## 4.3 构建 Spring Eureka 服务
 
