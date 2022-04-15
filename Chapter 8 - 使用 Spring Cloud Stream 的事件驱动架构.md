@@ -12,7 +12,7 @@ Created by : Mr Dk.
 
 事件驱动架构 (Event Driven Architecture, EDA) / 消息驱动架构 (Message Driven Architecture, MDA)。
 
-假设有一个场景，服务 A 中需要用到服务 B 的数据，因此使用缓存 (比如 *Redis*) 维护了一份服务 B 的数据。如果服务 B 被其它服务调用后，数据发生了变化，那么就需要使服务 A 缓存中的旧数据变为无效。有很多种方法可以实现这样的功能。
+假设有一个场景，服务 A 中需要用到服务 B 的数据，因此使用缓存 (比如 _Redis_) 维护了一份服务 B 的数据。如果服务 B 被其它服务调用后，数据发生了变化，那么就需要使服务 A 缓存中的旧数据变为无效。有很多种方法可以实现这样的功能。
 
 ### 8.1.1 使用同步请求 - 响应方式来传达状态变化
 
@@ -43,20 +43,20 @@ Created by : Mr Dk.
 
 ## 8.2 Spring Cloud Stream 简介
 
-Spring Cloud Stream 是一个由注解驱动的框架，允许开发人员在 Spring 应用程序中轻松构建发布者和消费者。另外，Spring Cloud Stream 还允许开发人员抽象出正在使用的消息传递平台的具体实现 - *Apache Kafka* 或 *RabbitMQ*。平台的具体实现代码被排除在应用程序代码以外，消息发布和消费是通过平台无关的 Spring 接口实现的。
+Spring Cloud Stream 是一个由注解驱动的框架，允许开发人员在 Spring 应用程序中轻松构建发布者和消费者。另外，Spring Cloud Stream 还允许开发人员抽象出正在使用的消息传递平台的具体实现 - _Apache Kafka_ 或 _RabbitMQ_。平台的具体实现代码被排除在应用程序代码以外，消息发布和消费是通过平台无关的 Spring 接口实现的。
 
 在架构上，有四个组件涉及消息的发布与接收：
 
-* 发射器 (source) - 接收 Java POJO，将其序列化并发送到通道
-* 通道 (channel) - 对队列的抽象，通道名称始终与目标队列名称相关联，可以通过配置文件修改要读取或写入的队列
-* 绑定器 (binder) - 与特定消息平台对话的 Spring 代码，允许开发人员使用通用接口处理消息
-* 接收器 (sink) - 监听传入消息的通道，将消息反序列化为 Java POJO
+- 发射器 (source) - 接收 Java POJO，将其序列化并发送到通道
+- 通道 (channel) - 对队列的抽象，通道名称始终与目标队列名称相关联，可以通过配置文件修改要读取或写入的队列
+- 绑定器 (binder) - 与特定消息平台对话的 Spring 代码，允许开发人员使用通用接口处理消息
+- 接收器 (sink) - 监听传入消息的通道，将消息反序列化为 Java POJO
 
 ## 8.3 编写简单的消息生产者和消费者
 
 ### 8.3.1 在组织服务中编写消息生产者
 
-使服务 B 能够在数据发生变化时，向 *Kafka* 的特定主题发布一条信息。
+使服务 B 能够在数据发生变化时，向 _Kafka_ 的特定主题发布一条信息。
 
 首先需要添加 Maven 依赖项，然后在服务的引导类上添加 `@EnableBinding(Source.class)` 注解。`Source` 类定义了通道与消息代理进行通信的方式，开发人员可以自行实现。向消息代理发布消息的逻辑实现如下：
 
@@ -64,15 +64,15 @@ Spring Cloud Stream 是一个由注解驱动的框架，允许开发人员在 Sp
 @Component
 public class SimpleSourceBean {
     private Source source;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(SimpleSourceBean.class);
-    
+
     // 该接口将被自动注入
     @Autowired
     public SimpleSourceBean(Source source) {
         this.source = source;
     }
-    
+
     public void publishOrgChange(String action, String orgId) {
         OrganizationChangeModel change = new OrganizationChangeModel(
             OrganizationChangeModel.class.getTYpeName(),
@@ -104,17 +104,17 @@ spring:
           brokers: localhost
 ```
 
-上述配置体现了将 `Source` 中的 `output` 通道映射到 `orgChangeTopic` 消息队列上，消息类型为 JSON。并告诉 Spring 使用了 *Kafka* 消息队列，以及 *Kafka* 和 *ZooKeeper* 的网络位置。
+上述配置体现了将 `Source` 中的 `output` 通道映射到 `orgChangeTopic` 消息队列上，消息类型为 JSON。并告诉 Spring 使用了 _Kafka_ 消息队列，以及 _Kafka_ 和 _ZooKeeper_ 的网络位置。
 
 在需要发布消息的类中，Spring 将自动装配用于发送消息的上述类。调用该类中实现的函数即可：
 
 ```java
 @Service
 public class OrganizationService {
-    
+
     @Autowired
     SimpleSourceBean simpleSourceBean;
-    
+
     public void saveOrg(Organization org) {
         // ...
         SimpleSourceBean.publishOrgChange("SAVE", org.getId());
@@ -130,7 +130,7 @@ public class OrganizationService {
 ```java
 @EnableBinding(Sink.class)
 public class Application {
-    
+
     @StreamListener(Sink.INPUT)
     public void loggerSink(OrganizationChangeModel orgChange) {
         // ...
@@ -170,7 +170,7 @@ spring:
 public interface CustomChannels {
     @Input("inboundOrgChanges")
     SubscribableChannel orgs();
-    
+
     @OutputChannel("outboundOrg")
     MessageChannel outboundOrg();
 }
@@ -193,13 +193,10 @@ spring:
 ```java
 @EnableBinding(CustomChannels.class) // 接口类
 public class OrganizationChangeHandler {
-    
+
     @StreamListener("inboundOrgChanges") // 通道名
     public void loggerSink(OrganizationChangeModel orgChange) {
         // ...
     }
 }
 ```
-
----
-

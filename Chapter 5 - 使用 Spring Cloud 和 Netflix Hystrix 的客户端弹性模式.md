@@ -63,7 +63,7 @@ public List<License> getLicensesByOrg(String organizationId) {
 
 ## 5.6 后备处理
 
-断路器本身就是远程资源与消费者的 *中间人*，所以断路器能够有机会拦截服务故障，并选择替代方案作为后备处理。使用起来很简单：
+断路器本身就是远程资源与消费者的 _中间人_，所以断路器能够有机会拦截服务故障，并选择替代方案作为后备处理。使用起来很简单：
 
 1. 在 `@HystrixCommand` 注解中添加一个 `fallbackMethod` 属性，指定一个函数名 - 该函数将在服务耗时太长被断路器切断都调用
 2. 实现这个后备处理的函数 - 显然，这个函数需要与原函数有着相同的 **函数签名** (参数、返回值)
@@ -115,8 +115,8 @@ private List<License> buildFallbackLicenseList(String organizationId) {
 
 对于 `maxQueue` 属性：
 
-* 如果被设置为 `-1`，那么将使用 JDK 中的 `SynchronousQueue` 来保存所有请求
-* 如果被设置为大于 `1`，那么将使用 JDK 中的 `LinkedBlockingQueue` 来保存所有请求
+- 如果被设置为 `-1`，那么将使用 JDK 中的 `SynchronousQueue` 来保存所有请求
+- 如果被设置为大于 `1`，那么将使用 JDK 中的 `LinkedBlockingQueue` 来保存所有请求
 
 > 这两个类还没有读 JDK 源代码，回头看一看有何区别。书上写得很含糊。
 
@@ -135,11 +135,11 @@ Hystrix 不仅能中止超时的调用，还会监控调用失败的次数 - 如
 
 以上，对应的属性如下：
 
-* `circuitBreaker.requestVolumeTHreshold` - 跳闸前时间窗口内必须发生的连续调用数量
-* `circuitBreaker.errorThresholdPercentage` - 超过上述阈值后，跳闸前必须达到的调用失败百分比
-* `circuitBreaker.sleepWindowInMilliseconds` - 允许一个调用访问服务以探测服务是否恢复的时间窗口
-* `metrics.rollingStats.timeInMilliseconds` - Hystrix 用于监控服务调用问题的窗口大小
-* `metrics.rollingStats.numBuckets` - 在滚动窗口中收集信息的次数
+- `circuitBreaker.requestVolumeTHreshold` - 跳闸前时间窗口内必须发生的连续调用数量
+- `circuitBreaker.errorThresholdPercentage` - 超过上述阈值后，跳闸前必须达到的调用失败百分比
+- `circuitBreaker.sleepWindowInMilliseconds` - 允许一个调用访问服务以探测服务是否恢复的时间窗口
+- `metrics.rollingStats.timeInMilliseconds` - Hystrix 用于监控服务调用问题的窗口大小
+- `metrics.rollingStats.numBuckets` - 在滚动窗口中收集信息的次数
 
 ```java
 @HystrixCommand(
@@ -164,11 +164,8 @@ public List<License> getLicensesByOrg(String organizationId) {
 
 从上面的代码可以看到，Hystrix 是高度可配置的。开发人员可以使用三个配置级别：
 
-* 整个应用程序级别的默认值
-* 类级别的默认值
-* 类中定义的线程池级别
+- 整个应用程序级别的默认值
+- 类级别的默认值
+- 类中定义的线程池级别
 
 每个配置都有默认值，开发人员可以分别在类级别和线程池级别显式覆盖默认配置。在生产环境中，最有可能需要调整的配置都应当被外化到 Spring Cloud Config 中。
-
----
-

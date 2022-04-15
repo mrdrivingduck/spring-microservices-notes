@@ -19,29 +19,29 @@ Created by : Mr Dk.
 
 对基于云的微服务应用程序来说，上述模型并不适用：
 
-* 单点故障
-* 跨多个服务器水平伸缩的负载均衡设施能力有限
-* 静态管理 (无法快速注册、注销)
-* 复杂 - 开发人员必须手动定义和部署服务的映射规则
+- 单点故障
+- 跨多个服务器水平伸缩的负载均衡设施能力有限
+- 静态管理 (无法快速注册、注销)
+- 复杂 - 开发人员必须手动定义和部署服务的映射规则
 
 ## 4.2 云中的服务发现
 
 基于云的微服务环境解决方案：使用 **服务发现** 机制。具有以下特点：
 
-* 高可用 - 服务发现集群可以跨结点共享服务查找
-* 点对点 - 服务发现集群中的每个结点共享服务实例的状态
-* 负载均衡 - 在所有服务实例之间动态负载均衡
-* 有弹性 - 客户端在本地缓存服务信息，使得服务发现能够逐步降级
-* 容错 - 服务发现能够检测服务实例的健康性，并在没有人为干预的情况下对故障采取行动
+- 高可用 - 服务发现集群可以跨结点共享服务查找
+- 点对点 - 服务发现集群中的每个结点共享服务实例的状态
+- 负载均衡 - 在所有服务实例之间动态负载均衡
+- 有弹性 - 客户端在本地缓存服务信息，使得服务发现能够逐步降级
+- 容错 - 服务发现能够检测服务实例的健康性，并在没有人为干预的情况下对故障采取行动
 
 ### 4.2.1 服务发现架构
 
 服务发现的架构包括以下四个概念：
 
-* 服务注册
-* 服务地址查找
-* 信息共享
-* 健康检测
+- 服务注册
+- 服务地址查找
+- 信息共享
+- 健康检测
 
 当服务实例启动时，将向一个或多个 **服务发现实例** 来注册自身可以被访问的物理位置、路径和端口。同一个服务的服务实例具有唯一的 IP 地址和端口，但都是以相同的 **服务 ID** 进行注册。服务 ID 是标识一组相同服务实例的 key。服务通常只会在一个服务发现实例中注册，然后通过多点广播协议传遍服务发现集群的所有其它结点。
 
@@ -63,10 +63,10 @@ Created by : Mr Dk.
 
 在 Maven 中添加 Eureka 依赖的 JAR 包，然后在 `src/main/resouces/application.yml` 中添加 Eureka 服务所需要的配置：
 
-* Eureka 服务运行的端口
-* 该服务自身不注册
-* 该服务自身不缓存本地注册表
-* 在服务开始接收请求前等待的初始时间
+- Eureka 服务运行的端口
+- 该服务自身不注册
+- 该服务自身不缓存本地注册表
+- 在服务开始接收请求前等待的初始时间
 
 > 每次服务注册默认需要 30s 才能显示在 Eureka 实例给出的服务列表中 - 这是因为 Eureka 需要接收 3 次连续的 ping，每次间隔 10s，才能开始使用这个服务。
 
@@ -78,15 +78,15 @@ Created by : Mr Dk.
 
 每个通过 Eureka 注册的服务都包含两个 ID：
 
-* 应用程序 ID - 由 `spring.application.name` 指定，用于表示一组提供相同服务的实例
-* 实例 ID - 一个随机数，用于代表单个服务实例
+- 应用程序 ID - 由 `spring.application.name` 指定，用于表示一组提供相同服务的实例
+- 实例 ID - 一个随机数，用于代表单个服务实例
 
 其余的配置包括：
 
-* `eureka.instance.preferIpAddress` - 用当前实例的 IP 地址注册，而不是主机名 (对 docker 可能会有问题)
-* `eureka.client.registerWithEureka` - 触发器，告诉当前实例通过 Eureka 注册它本身
-* `eureka.client.fetchRegistry` - 告知 Eureka 客户端，在本地缓存注册表
-* `eureka.client.serviceUrl.defaultZone` - 包含客户端可访问的所有 Eureka 实例的列表
+- `eureka.instance.preferIpAddress` - 用当前实例的 IP 地址注册，而不是主机名 (对 docker 可能会有问题)
+- `eureka.client.registerWithEureka` - 触发器，告诉当前实例通过 Eureka 注册它本身
+- `eureka.client.fetchRegistry` - 告知 Eureka 客户端，在本地缓存注册表
+- `eureka.client.serviceUrl.defaultZone` - 包含客户端可访问的所有 Eureka 实例的列表
 
 这样，服务实例作为 Eureka 客户端，就知道去哪里访问，以及如何访问 Eureka 服务了。
 
@@ -115,7 +115,7 @@ Created by : Mr Dk.
 ```java
 @FeignClient("organizationservice")
 public interface OrganizationFeignClient {
-    
+
     @RequestMapping(
     	Method=RequestMethod.GET,
         value="/v1/organizations/{organizationId}",
@@ -127,6 +127,3 @@ public interface OrganizationFeignClient {
 ```
 
 开发人员只需要自动装配并使用这个类即可。通过 Feign 客户端，只要被调用的服务返回了 4xx-5xx 的状态码，都会被映射到 `FeignException`。
-
----
-

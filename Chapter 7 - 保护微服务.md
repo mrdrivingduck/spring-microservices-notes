@@ -21,10 +21,10 @@ OAuth 2 是一个基于 token 的安全验证和授权框架，分为以下四�
 
 OAuth 2 规范支持四种类型的授权：
 
-* Password (密码)
-* Client credential (客户端凭据)
-* Authorization code (授权码)
-* Implicit (隐式)
+- Password (密码)
+- Client credential (客户端凭据)
+- Authorization code (授权码)
+- Implicit (隐式)
 
 ## 7.2 从小事做起：使用 Spring 和 OAuth 2 来保护单个端点
 
@@ -79,18 +79,18 @@ protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
 用户可以请求 OAuth 2 验证服务的 `/auth/oauth/token` end point，同时给出：
 
-* `Authorization` 头部需要设置为应用程序的 ID 和密钥
-* `grant_type` - OAuth 2 授权类型 (password 授权)
-* `scope` - 应用程序的作用域
-* `username` + `password`
+- `Authorization` 头部需要设置为应用程序的 ID 和密钥
+- `grant_type` - OAuth 2 授权类型 (password 授权)
+- `scope` - 应用程序的作用域
+- `username` + `password`
 
 除了 `Authorization` 头部，其余部分使用 HTTP 表单传递。在验证服务发回的响应中，将包含：
 
-* `access_token` - OAuth 2 token，随用户每次访问受保护资源时一起出示
-* `token_type` - Token 类型
-* `refresh_token` - 用于在 token 过期后重新颁发 token
-* `expires_in` - Token 过期前的秒数
-* `scope` - Token 的有效作用域
+- `access_token` - OAuth 2 token，随用户每次访问受保护资源时一起出示
+- `token_type` - Token 类型
+- `refresh_token` - 用于在 token 过期后重新颁发 token
+- `expires_in` - Token 过期前的秒数
+- `scope` - Token 的有效作用域
 
 有了有效的 token，用户可以直接请求验证服务的 `/auth/user`，并附带 token。认证服务将会确认 token，并检索用户信息。每个受保护的服务都是通过调用验证服务的 `/auth/user` 来确认 token 并检索用户信息。在向 `/auth/user` 发送请求时，需要创建 `Authorization` HTTP header，并设置值为 `Bearer <token>`。如果 token 有效，那么这个 end point 将会返回用户信息 (角色等)。
 
@@ -119,8 +119,8 @@ security:
 
 定义访问规则的方式与之前类似：继承 `ResourceServerConfigurerAdapter`，并重写 `configure()` 函数。通过定义访问控制规则，可以使：
 
-* 只有已通过验证的用户才能访问服务
-* 只有具有特定角色的用户才能访问服务
+- 只有已通过验证的用户才能访问服务
+- 只有具有特定角色的用户才能访问服务
 
 #### 7.3.3.1 通过验证用户保护服务
 
@@ -129,7 +129,7 @@ security:
 ```java
 @Configuration
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-    
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().anyRequest().authenticated();
@@ -144,7 +144,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 ```java
 @Configuration
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-    
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.
@@ -168,9 +168,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
 在默认情况下，Zuul 不会将敏感的 HTTP header 转发。黑名单包含以下三种头部：
 
-* `Cookie`
-* `Set-Cookie`
-* `Authorization`
+- `Cookie`
+- `Set-Cookie`
+- `Authorization`
 
 那么只需要将 `Authorization` 从黑名单中移除即可：
 
@@ -184,19 +184,16 @@ zuul.sensitiveHeaders: Cookie, Set-Cookie
 
 OAuth 2 是一个基于 token 的验证框架，但是并没有给出如何定义 token 的任何标准。而 JSON Web Token (JWT, RFC-7519) 旨在为 OAuth 2 token 提供标准的结构。JWT 具有以下特点：
 
-* 小巧 - 由 Base64 编码，可以通过 URL、HTTP header 或 request body 轻松传递
-* 密码签名 - JWT token 由颁发它的服务器签名，保证 token 不会被篡改
-* 自包含 - 不需要调用验证服务来确认 token 的内容 (因为已经被签过名)
-* 可扩展 - 可以在 token 被密封之前，在 token 中放置一些额外的信息
+- 小巧 - 由 Base64 编码，可以通过 URL、HTTP header 或 request body 轻松传递
+- 密码签名 - JWT token 由颁发它的服务器签名，保证 token 不会被篡改
+- 自包含 - 不需要调用验证服务来确认 token 的内容 (因为已经被签过名)
+- 可扩展 - 可以在 token 被密封之前，在 token 中放置一些额外的信息
 
 > 具体都是使用方法，不展开了。
 
 ## 7.5 关于微服务安全的总结
 
-* 为所有业务通信使用 HTTPS / 安全套接字层 (SSL)
-* 使用服务网关访问服务
-* 将服务划分到公共 API 和私有 API (?)
-* 封锁不需要的网络端口，限制微服务的攻击面
-
----
-
+- 为所有业务通信使用 HTTPS / 安全套接字层 (SSL)
+- 使用服务网关访问服务
+- 将服务划分到公共 API 和私有 API (?)
+- 封锁不需要的网络端口，限制微服务的攻击面

@@ -1,6 +1,6 @@
 # spring-microservices-notes
 
-☁️ Notes of reading *Spring microservices in action*.
+☁️ Notes of reading _Spring microservices in action_.
 
 Created by : Mr Dk.
 
@@ -10,15 +10,12 @@ Created by : Mr Dk.
 
 ## About
 
-The notes of reading *Spring microservices in action* by *John Carnell*, translated by *陈文辉*。The cover of the book is as follows, **please support the legal edition!**
+The notes of reading _Spring microservices in action_ by _John Carnell_, translated by _陈文辉_。The cover of the book is as follows, **please support the legal edition!**
 
-<img src="./book.png" alt="book" style="zoom:33%;" />
+![book](./book.png)
 
 ---
 
 ## License
 
-Copyright © 2020, Jingtang Zhang. ([MIT License](LICENSE))
-
----
-
+Copyright © 2020, Jingtang Zhang. ([MIT License](./LICENSE))
